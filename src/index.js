@@ -46,7 +46,6 @@ app.get('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
   const { title, deadline } = request.body;
   const { user } = request;
 
@@ -66,7 +65,24 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+  const { title, deadline } = request.body;
+  const { user } = request;
+
+  const arrayTodos = user.todos;
+  const todoIndex = arrayTodos.findIndex(index => index.id === id);
+
+  if (todoIndex < 0) return response.status(404).json({ error: 'Id not found!' });
+
+  const todo = {
+    ...arrayTodos[todoIndex],
+    title,
+    deadline: new Date(deadline)
+  };
+
+  arrayTodos[todoIndex] = todo;
+
+  return response.status(201).json(todo);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
